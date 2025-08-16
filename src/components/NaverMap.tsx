@@ -1,20 +1,13 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-
-interface Job {
-  jobId: string
-  company: string
-  position: string
-  lat: number
-  lng: number
-}
+import { Job } from './types'
 
 interface NaverMapProps {
   lat: number
   lng: number
   jobs: Job[]
-  onMarkerClick: (jobId: string) => void
+  onMarkerClick?: (jobId: string) => void
 }
 
 declare global {
@@ -36,11 +29,9 @@ export default function NaverMap({
   useEffect(() => {
     if (!window.naver || !mapRef.current) return
 
-    // 기존 마커 제거
-    markersRef.current.forEach((marker) => marker.setMap(null))
+    markersRef.current.forEach((m) => m.setMap(null))
     markersRef.current = []
 
-    // 지도 초기화 (이미 있으면 센터만 변경)
     if (!mapInstance.current) {
       mapInstance.current = new window.naver.maps.Map(mapRef.current, {
         center: new window.naver.maps.LatLng(lat, lng),
@@ -61,19 +52,16 @@ export default function NaverMap({
     })
     markersRef.current.push(userMarker)
 
-    // 공고별 마커 생성
+    // 공고 마커
     jobs.forEach((job) => {
       const marker = new window.naver.maps.Marker({
         position: new window.naver.maps.LatLng(job.lat, job.lng),
         map: mapInstance.current,
         title: job.company,
       })
-
-      // ✅ 마커 클릭 이벤트 수정
       window.naver.maps.Event.addListener(marker, 'click', () => {
-        onMarkerClick(job.jobId)
+        if (onMarkerClick) onMarkerClick(job.jobId)
       })
-
       markersRef.current.push(marker)
     })
   }, [lat, lng, jobs, onMarkerClick])

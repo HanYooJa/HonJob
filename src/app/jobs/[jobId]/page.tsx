@@ -10,6 +10,7 @@ interface Job {
   description: string
   distance: string
   isRemote: boolean
+  experience?: '신입' | '경력' | '경력무관'
 }
 
 export default function JobDetail() {
@@ -53,13 +54,17 @@ export default function JobDetail() {
       >
         ← 뒤로가기
       </button>
+
       <h1 className="text-3xl font-bold mb-4">
         {job.company} - {job.position}
       </h1>
+
       <p className="mb-2">거리: {job.distance}</p>
       <p className="mb-2">
         근무 형태: {job.isRemote ? '재택 가능' : '출근 필요'}
       </p>
+      {job.experience && <p className="mb-2">경력: {job.experience}</p>}
+
       <p className="mt-6 whitespace-pre-wrap">{job.description}</p>
     </main>
   )

@@ -8,19 +8,22 @@ interface JobCardProps {
   position: string
   distance: string
   isRemote: boolean
+  startDate?: string
+  endDate?: string
 }
 
-export default function JobCard({
+export function JobCard({
   jobId,
   company,
   position,
   distance,
   isRemote,
+  startDate,
+  endDate,
 }: JobCardProps) {
   const router = useRouter()
 
   const handleClick = () => {
-    // 최근 본 공고 저장
     if (typeof window !== 'undefined') {
       const prev = JSON.parse(
         localStorage.getItem('recentJobs') || '[]'
@@ -29,8 +32,6 @@ export default function JobCard({
       const newList = [jobId, ...filtered].slice(0, 10)
       localStorage.setItem('recentJobs', JSON.stringify(newList))
     }
-
-    // 상세 페이지로 이동
     router.push(`/jobs/${jobId}`)
   }
 
@@ -44,6 +45,11 @@ export default function JobCard({
       <p className="text-sm text-gray-500 mt-1">
         거리: {distance} · {isRemote ? '재택 가능' : '출근 필요'}
       </p>
+      {startDate && endDate && (
+        <p className="text-xs text-gray-400 mt-1">
+          공고 기간: {startDate} ~ {endDate}
+        </p>
+      )}
     </article>
   )
 }
